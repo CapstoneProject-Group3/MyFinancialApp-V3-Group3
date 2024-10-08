@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -24,6 +25,10 @@ const Home = () => {
     setHasToken(false);
   };
 
+  const startServey = () => {
+
+  };
+
   if (!hasToken) {
     return <div>You are not logged in.</div>;
   }
@@ -34,6 +39,9 @@ const Home = () => {
       <p>You are authenticated and can view this content.</p>
       {/* Logout */}
       <button onClick={handleLogout}>Logout</button>
+      <br />
+      <p>Access our survey.</p>
+      <button><Link to="/questionaire">Start Servey</Link></button>
     </div>
   );
 };
