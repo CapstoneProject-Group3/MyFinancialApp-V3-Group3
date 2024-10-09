@@ -25,10 +25,6 @@ const Home = () => {
     setHasToken(false);
   };
 
-  const startServey = () => {
-
-  };
-
   if (!hasToken) {
     return <div>You are not logged in.</div>;
   }
