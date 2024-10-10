@@ -4,6 +4,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/Home';
 import Questionaire from './pages/survey/Questionaire';
+import PortfolioPage from './pages/PortfolioPage';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -18,6 +19,7 @@ const App = () => {
           <Route path='/home' element={<Home />} />
           <Route path='/' element={<Navigate to="/home" replace />} />
           <Route path='/questionaire' element={<Questionaire />} />
+          <Route path="/portfolio/:userId" element={<PortfolioPage />} />
         </Routes>
       </div>
     </>
