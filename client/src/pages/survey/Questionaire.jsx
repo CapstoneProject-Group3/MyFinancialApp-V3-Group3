@@ -1,48 +1,59 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Questionaire.css';
 
 const Questionaire = () => {
     const [formData, setFormData] = useState({
-        Q1: '',
-        Q2: '',
-        Q3: '',
-        Q4: '',
-        Q5: '',
-        Q6: '',
-        Q7: '',
-        Q8: '',
-        Q9: '',
-        Q10: '',
-        Q11: '',
-        Q12: '',
-        Q13: ''
-    });
+        Q1: '',  Q2: '',  Q3: '',  Q4: '',
+        Q5: '',  Q6: '',  Q7: '',  Q8: '',
+        Q9: '', Q10: '', Q11: '', Q12: ''});
+
+    const navigate = useNavigate(); 
+
+        useEffect(() => {// sychorize the data user chose when clicking back in the result page
+            const savedData = JSON.parse(localStorage.getItem('formData'));
+            if (savedData) {
+                setFormData(savedData);
+            }
+        }, []);
 
     const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
+        setFormData({...formData,[e.target.name]: e.target.value});
+        localStorage.setItem('formData', JSON.stringify({ ...formData, [e.target.name]: e.target.value }));
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        const data = Object.entries(formData).map(([key, value]) => ({ key, value }));
-        console.log('Form data: ', data);
-
-        fetch('http://localhost:3001/submit-quiz', {
+    
+        const data = { ...formData };
+        const token = localStorage.getItem('token');
+    
+        if (!token) {
+            console.error('No token found. User might not be logged in.');
+            return;
+        }
+    
+        fetch('http://localhost:4000/api/questionnaire/submit-quiz', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify(data),
         })
-            .then((res) => res.json())
-            .then((rep) => {
-                console.log('rep:', rep.totalScore);
-                window.location.href = `/result.html?number=${rep.totalScore}`;
-            });
+        .then(res => {
+            if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`);
+            }
+            return res.json();
+        })
+        .then(rep => {
+            console.log('Response:', rep);
+            navigate(`/result?totalScore=${rep.totalScore}&riskRating=${rep.riskRating}`);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
     };
 
     return (
@@ -52,16 +63,16 @@ const Questionaire = () => {
                 Before you invest, it is important to understand what kind of investor you are, which means knowing your willingness and ability to accept risk, your investment time horizon, and your objectives. Answering these questions will best help us understand your current situation.
             </p><br />
             <p2 className="hint">
-                Hint: Only the final risk tolerant level will be stored in your profile. You do not have to worry about the data leak of your choices to each of the questions.
+                Hint: Only the final risk tolerant level and total score will be stored in your profile. You do not have to worry about the data leak of your choices to each of the questions.
             </p2>
 
             <form id="quizForm" onSubmit={handleSubmit}>
             <br />
                 <div className="questionGroup">
                     <p className="p1">Question 1: Which statement best describes your knowledge of investments?</p>
-                    <label><input type="radio" name="Q1" value="A" required onChange={handleChange} /> A. I have very little knowledge of investments.</label><br />
-                    <label><input type="radio" name="Q1" value="B" onChange={handleChange} /> B. I have a moderate level of knowledge.</label><br />
-                    <label><input type="radio" name="Q1" value="C" onChange={handleChange} /> C. I have extensive knowledge and follow financial markets closely.</label><br />
+                    <label><input type="radio" name="Q1" value="A" required onChange={handleChange} /> A. I have very little knowledge of investments.(0 points)</label><br />
+                    <label><input type="radio" name="Q1" value="B" onChange={handleChange} /> B. I have a moderate level of knowledge.(5 points)</label><br />
+                    <label><input type="radio" name="Q1" value="C" onChange={handleChange} /> C. I have extensive knowledge and follow financial markets closely.(10 points)</label><br />
                 </div>
 
                 <br />
@@ -157,18 +168,8 @@ const Questionaire = () => {
                     <label><input type="radio" name="Q12" value="C" onChange={handleChange} /> C. Hold onto the investment and not sell any of the investment in the hopes of higher future returns (5 points)</label><br />
                     <label><input type="radio" name="Q12" value="D" onChange={handleChange} /> D. Buy more of the investment now that prices are lower (10 points)</label><br />
                 </div>
-                <br />
-                <div className="questionGroup">
-                    <p className="p1">Question 13: Investments with higher returns typically involve greater risk. The charts below show hypothetical annual returns (annual gains and losses) for four different investment portfolios over a 10-year period. Keeping in mind how the returns fluctuate, which investment portfolio would you be most comfortable holding?</p>
-                    <label><input type="radio" name="Q13" value="A" required onChange={handleChange} /> A. Portfolio A (0 points)</label><br />
-                    <label><input type="radio" name="Q13" value="B" onChange={handleChange} /> B. Portfolio B (4 points)</label><br />
-                    <label><input type="radio" name="Q13" value="C" onChange={handleChange} /> C. Portfolio C (6 points)</label><br />
-                    <label><input type="radio" name="Q13" value="D" onChange={handleChange} /> D. Portfolio D (10 points)</label><br />
-                </div>
-
                 <button type="submit" className="button">Submit</button>
             </form>
-
             <p id="result"></p>
         </div>
     );

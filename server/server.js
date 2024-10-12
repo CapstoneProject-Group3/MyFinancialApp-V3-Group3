@@ -1,7 +1,8 @@
 import express from "express";
-import cors from 'cors';
+import cors from "cors";
 import { connectDB } from "./config/db.js";
 import userRouter from "./routes/userRoute.js";
+import riskManageRouter from './routes/questionnaireRoute.js';
 import 'dotenv/config';
 import dotenv from 'dotenv'
 import sequelize from './config/db.js';
@@ -18,7 +19,7 @@ app.use(cors());
 
 connectDB()
   .then(() => {
-    sequelize.sync({ force: true })
+    sequelize.sync({ force: false })
       .then(() => {
         app.listen(port, () => {
           console.log(`http://localhost:${port}`);
@@ -35,6 +36,7 @@ connectDB()
 
 app.use("/api/user", userRouter);
 app.use('/api/portfolio', portfolioRouter);
+app.use("/api/questionnaire", riskManageRouter);
 
 app.get("/", (req, res) => {
   res.send("api Working");
