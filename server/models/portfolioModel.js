@@ -1,3 +1,43 @@
+import Sequelize from 'sequelize';
+import sequelize from '../config/db.js';
+
+const Portfolio = sequelize.define('portfolios',{
+    userId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'users',
+            key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
+    },
+    stocks: {
+        type: Sequelize.FLOAT,
+        allowNull: false,
+        defaultValue: 0.0
+    },
+    bonds: {
+        type: Sequelize.FLOAT,
+        allowNull: false,
+        defaultValue: 0.0
+    },
+    cashOrEquivalents: {
+        type: Sequelize.FLOAT,
+        allowNull: false,
+        defaultValue: 0.0
+    },
+    riskLevel: {
+        type: Sequelize.STRING,
+        allowNull: false
+    }
+}, {
+    timestamps: false
+});
+
+export default Portfolio;
+
+/*
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/database_portfolio.js';
 
@@ -29,3 +69,4 @@ const Portfolio = sequelize.define('Portfolio', {
 });
 
 export default Portfolio;
+*/

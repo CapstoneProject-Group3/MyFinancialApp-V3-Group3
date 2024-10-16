@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { Pie } from "react-chartjs-2";
-import { Chart as ChartJS, Tooltip, Legend, ArcElement} from "chart.js/auto";
-import { ResponsiveContainer } from 'recharts';  // Import if using recharts (optional)
+import { Chart as ChartJS, Tooltip, Legend, ArcElement } from "chart.js/auto";
+import { ResponsiveContainer } from 'recharts';
 
 // Register Chart.js plugins
 ChartJS.register(Tooltip, Legend, ArcElement);
@@ -44,9 +44,9 @@ export const PieChartComponent = ({ data }) => {
             {
                 data: data.map(item => item.value),
                 backgroundColor: ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'],
-                hoverOffset: 4,  // Adjust hover state size change
-                borderWidth: 1,  // Adjust border width of the sections
-                borderColor: '#ffffff',  // Adjust border color
+                hoverOffset: 4,
+                borderWidth: 1,
+                borderColor: '#ffffff',
             },
         ],
     };
@@ -58,30 +58,46 @@ export const PieChartComponent = ({ data }) => {
 
 // Portfolio page component
 const PortfolioPage = () => {
-    const { userId } = useParams();
     const [data, setData] = useState([]);
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const riskRating = queryParams.get('riskRating');
 
     useEffect(() => {
-        if (userId) {
-            axios.get(`http://localhost:4000/api/portfolio/${userId}`)
-                .then(response => {
-                    const { stocksPercentage, bondsPercentage, cashOrEquivalentsPercentage } = response.data.data;
-                    setData([
-                        { name: 'Stocks', value: stocksPercentage },
-                        { name: 'Bonds', value: bondsPercentage },
-                        { name: 'Cash or Equivalents', value: cashOrEquivalentsPercentage }
-                    ]);
-                })
-                .catch(error => {
-                    console.error('Error fetching portfolio data:', error);
-                });
-        } else {
-            console.log("UserId is undefined, not fetching data");
-        }
-    }, [userId]);   // Dependency array for useEffect, will rerun when 'userId' changes
+        const token = localStorage.getItem('token');
+        if (riskRating && token) {
+        axios.post('http://localhost:4000/api/portfolio', {riskLevel: riskRating},{
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            console.log('API response:', response.data);
+            const { stocks, bonds, cashOrEquivalents } = response.data.portfolio;
+            setData([
+                { name: 'Stocks', value: stocks },
+                { name: 'Bonds', value: bonds },
+                { name: 'Cash or Equivalents', value: cashOrEquivalents }
+            ]);
+        })
+        .catch(error => {
+            console.error('Error fetching portfolio data:', error.response ? error.response.data.error : error.message);
+        });
+    }
+    }, [riskRating]);
 
     return (
-        <div style={{ width: '100%', height: '400px' }}>
+        <div style={{ width: '100%', height: '400px', position: 'relative' }}>
+            <h style={{
+                textAlign: 'center',   // Center the text horizontally
+                fontWeight: 'bold',    // Make the text bold
+                fontSize: '24px',      // Increase the font size
+                marginBottom: '20px',  // Add space between the title and the chart
+                color: '#333'    
+            }}>
+                Your Investment Portfolio
+            </h>
             {data.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">
                     <PieChartComponent data={data} />

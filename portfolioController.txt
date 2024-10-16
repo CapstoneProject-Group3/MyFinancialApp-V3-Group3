@@ -2,7 +2,7 @@ import {
     getPortfolioByRisk,
     createOrUpdatePortfolio,
     getPortfolioById
-} from './portfolio.service.js';
+} from '../services/portfolioService.js';
 
 
 const handleRiskAssessment = async (req, res) => {

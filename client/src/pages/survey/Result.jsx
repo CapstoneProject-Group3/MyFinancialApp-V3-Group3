@@ -16,6 +16,10 @@ const Result = () => {
         setTotalScore(score);
         setRiskRating(rating);
     }, [location.search]);
+    
+    const handleGoToPortfolio = () => {
+        navigate(`/portfolio?riskRating=${riskRating}`);
+    };    
 
     return (
         <div className="result-container">
@@ -34,9 +38,7 @@ const Result = () => {
                 <button onClick={() => window.history.back()}>
                     Back
                 </button>
-                <button onClick={() => navigate(`/portfolio/${token}`)}>
-                    Next
-                </button>
+                <button onClick={handleGoToPortfolio}>Next</button>
             </div>
         </div>
     );

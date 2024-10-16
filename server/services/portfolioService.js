@@ -1,11 +1,11 @@
-import Portfolio from "../../models/portfolioModel.js";
+import Portfolio from "../models/portfolioModel.js";
 
 const portfolioAllocations = {
-    veryConservative: { stocks: [10, 20], bonds: [75, 85], cashOrEquivalents: [5, 5] },
-    conservative: { stocks: [20, 30], bonds: [60, 70], cashOrEquivalents: [5, 10] },
-    balanced: { stocks: [40, 60], bonds: [40, 50], cashOrEquivalents: [0, 10] },
-    growth: { stocks: [70, 85], bonds: [10, 25], cashOrEquivalents: [0, 5] },
-    aggressiveGrowth: { stocks: [85, 100], bonds: [0, 10], cashOrEquivalents: [0, 5] }
+    'Very Conservative': { stocks: [10, 20], bonds: [75, 85], cashOrEquivalents: [5, 5] },
+    Conservative: { stocks: [20, 30], bonds: [60, 70], cashOrEquivalents: [5, 10] },
+    Balanced: { stocks: [40, 60], bonds: [40, 50], cashOrEquivalents: [0, 10] },
+    Growth: { stocks: [70, 85], bonds: [10, 25], cashOrEquivalents: [0, 5] },
+    'Aggressive Growth': { stocks: [85, 100], bonds: [0, 10], cashOrEquivalents: [0, 5] }
 };
 
 function selectPortfolioAllocation(allocationRanges) {

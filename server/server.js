@@ -6,7 +6,7 @@ import riskManageRouter from './routes/questionnaireRoute.js';
 import 'dotenv/config';
 import dotenv from 'dotenv'
 import sequelize from './config/db.js';
-import portfolioRouter from "./api/portfolio/portfolio.router.js";
+import portfolioRouter from "./routes/portfolioRoute.js";
 
 dotenv.config();
 const app = express();
@@ -15,6 +15,7 @@ const port = process.env.PORT || 4000;
 
 app.use(express.json());
 app.use(cors());
+app.use(express.urlencoded({ extended: true }));
 
 
 connectDB()

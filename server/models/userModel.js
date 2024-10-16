@@ -1,6 +1,7 @@
 import Sequelize from 'sequelize';
 import sequelize from '../config/db.js';
-import RiskManage from './RiskManageModel.js'; 
+import RiskManage from './RiskManageModel.js';
+import Portfolio from './portfolioModel.js';
 
 const User = sequelize.define('user', {
     name: {
@@ -30,6 +31,17 @@ RiskManage.belongsTo(User, {
   onDelete: "CASCADE",
   onUpdate: "CASCADE",
 });
+
+User.hasMany(Portfolio, {
+    foreignKey: "userId",
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+  });
+  Portfolio.belongsTo(User, {
+    foreignKey: "userId",
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+  });
 
 
 export default User;
