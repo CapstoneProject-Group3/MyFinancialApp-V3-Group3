@@ -7,6 +7,7 @@ import 'dotenv/config';
 import dotenv from 'dotenv'
 import sequelize from './config/db.js';
 import portfolioRouter from "./routes/portfolioRoute.js";
+import financialProductRouter from "./routes/fianancialProductRoute.js";
 
 dotenv.config();
 const app = express();
@@ -38,6 +39,7 @@ connectDB()
 app.use("/api/user", userRouter);
 app.use('/api/portfolio', portfolioRouter);
 app.use("/api/questionnaire", riskManageRouter);
+app.use("/api/financialProduct", financialProductRouter);
 
 app.get("/", (req, res) => {
   res.send("api Working");
