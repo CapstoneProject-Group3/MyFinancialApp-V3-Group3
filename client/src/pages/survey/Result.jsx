@@ -19,7 +19,7 @@ const Result = () => {
     
     const handleGoToPortfolio = () => {
         navigate(`/portfolio?riskRating=${riskRating}`);
-    };    
+    };
 
     return (
         <div className="result-container">
@@ -28,6 +28,7 @@ const Result = () => {
                 <div className="result">
                     <p><strong>Total Score:</strong> {totalScore}</p>
                     <p><strong>Risk Rating:</strong> {riskRating}</p>
+                    <p>Hint: The score range minimum 4, Maximum 128</p>
                 </div>
             ) : (
                 <p>Loading your result...</p>
