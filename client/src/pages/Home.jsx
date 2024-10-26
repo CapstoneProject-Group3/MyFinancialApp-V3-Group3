@@ -38,6 +38,8 @@ const Home = () => {
       <br />
       <p>Access our survey.</p>
       <button><Link to="/questionaire">Start Servey</Link></button>
+      <button><Link to="/result">View Result</Link></button>
+      <button><Link to="/portfolio">Go to Portfolio</Link></button>
     </div>
   );
 };

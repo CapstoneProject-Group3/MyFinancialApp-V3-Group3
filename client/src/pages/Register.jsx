@@ -10,10 +10,17 @@ const Register = () => {
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
   const handleRegister = async (event) => {
     event.preventDefault();
     setError('');
     setSuccess(false);
+
+    if (!passwordRegex.test(password)) {
+      setError('The password must be at least 8 characters long and include uppercase and lowercase letters, a number, and a special character.');
+      return;
+    }
 
     try {
       const response = await axios.post('http://localhost:4000/api/user/register', {
