@@ -25,7 +25,6 @@ const FinancialProductForm = () => {
     
         try {
             const res = await fetch('http://localhost:4000/api/financialProduct/create', {
-            const res = await fetch('http://localhost:4000/api/financialProduct/create', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
