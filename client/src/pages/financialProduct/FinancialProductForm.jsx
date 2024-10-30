@@ -12,6 +12,7 @@ const FinancialProductForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
     
+    
         const newProduct = {
             name,
             type,
@@ -21,7 +22,9 @@ const FinancialProductForm = () => {
             riskLevel,
         };
     
+    
         try {
+            const res = await fetch('http://localhost:4000/api/financialProduct/create', {
             const res = await fetch('http://localhost:4000/api/financialProduct/create', {
                 method: 'POST',
                 headers: {
