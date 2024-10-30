@@ -1,7 +1,7 @@
 import Sequelize from 'sequelize';
 
-//const sequelize = new Sequelize('mysql://root:food@localhost:3306/MySQLfood1');
-const sequelize = new Sequelize('mysql://root:root@localhost:8889/login');
+const sequelize = new Sequelize('mysql://root:food@localhost:3306/MySQLfood1');
+//const sequelize = new Sequelize('mysql://root:root@localhost:8889/login');
 
 export const connectDB = async () => {
   try {

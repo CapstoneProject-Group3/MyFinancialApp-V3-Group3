@@ -10,12 +10,12 @@ const Questionaire = () => {
 
     const navigate = useNavigate(); 
 
-        useEffect(() => {// sychorize the data user chose when clicking back in the result page
-            const savedData = JSON.parse(localStorage.getItem('formData'));
-            if (savedData) {
-                setFormData(savedData);
-            }
-        }, []);
+    useEffect(() => {// sychorize the data user chose when clicking back in the result page
+        const savedData = JSON.parse(localStorage.getItem('formData'));
+        if (savedData) {
+            setFormData(savedData);
+        }
+    }, []);
 
     const handleChange = (e) => {
         setFormData({...formData,[e.target.name]: e.target.value});
@@ -63,7 +63,10 @@ const Questionaire = () => {
                 Before you invest, it is important to understand what kind of investor you are, which means knowing your willingness and ability to accept risk, your investment time horizon, and your objectives. Answering these questions will best help us understand your current situation.
             </p><br />
             <p2 className="hint">
-                Hint: Only the final risk tolerant level and total score will be stored in your profile. You do not have to worry about the data leak of your choices to each of the questions.
+                Hint: All the questions are compulsory.
+            </p2>
+            <p2 className="hint"><br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Only the final risk tolerant level and total score will be stored in your profile. You do not have to worry about the data leak of your choices to each of the questions.
             </p2>
 
             <form id="quizForm" onSubmit={handleSubmit}>
@@ -171,6 +174,9 @@ const Questionaire = () => {
                 <button type="submit" className="button">Submit</button>
             </form>
             <p id="result"></p>
+
+            <p2>The source of the questions are from Canadian Investment Regulatory Organization. </p2>
+            <p2>https://www.ciro.ca/</p2>
         </div>
     );
 };
