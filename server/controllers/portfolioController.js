@@ -1,14 +1,13 @@
 // controllers/portfolioController.js
 import jwt from 'jsonwebtoken';
 import Portfolio from '../models/portfolioModel.js';
-//import { getPortfolioByRisk } from '../services/portfolioService.js';
 
 const portfolioAllocations = {
-    'Very Conservative': { stocks: [10, 20], bonds: [75, 85], cashOrEquivalents: [5, 5] },
-    Conservative: { stocks: [20, 30], bonds: [60, 70], cashOrEquivalents: [5, 10] },
-    Balanced: { stocks: [40, 60], bonds: [40, 50], cashOrEquivalents: [0, 10] },
-    Growth: { stocks: [70, 85], bonds: [10, 25], cashOrEquivalents: [0, 5] },
-    'Aggressive Growth': { stocks: [85, 100], bonds: [0, 10], cashOrEquivalents: [0, 5] }
+    'Very Conservative': { stocks: [25, 30], bonds: [60, 65], cashOrEquivalents: [5, 15] },
+    Conservative: { stocks: [35, 40], bonds: [55, 60], cashOrEquivalents: [5, 10] },
+    Balanced: { stocks: [50, 55], bonds: [35, 40], cashOrEquivalents: [5, 10] },
+    Growth: { stocks: [60, 65], bonds: [25, 30], cashOrEquivalents: [5, 10] },
+    'Aggressive Growth': { stocks: [80, 100], bonds: [0, 10], cashOrEquivalents: [0, 10] }
 };
 
 function selectPortfolioAllocation(allocationRanges) {
@@ -16,24 +15,35 @@ function selectPortfolioAllocation(allocationRanges) {
     let bonds = selectValueWithinRange(...allocationRanges.bonds);
     let cashOrEquivalents = 100 - stocks - bonds;
 
+    // Correct values to ensure cashOrEquivalents is not negative and within the range
+    if (cashOrEquivalents < 0) {
+        let adjustment = Math.abs(cashOrEquivalents);
+        let adjustStocks = Math.ceil(adjustment / 2);
+        let adjustBonds = Math.floor(adjustment / 2);
+
+        stocks -= adjustStocks > stocks ? stocks : adjustStocks;
+        bonds -= adjustBonds > bonds ? bonds : adjustBonds;
+        cashOrEquivalents = 100 - stocks - bonds;
+    }
+
     // Ensure cashOrEquivalents falls within the specified range
-    if (cashOrEquivalents < allocationRanges.cashOrEquivalents[0] ||
-        cashOrEquivalents > allocationRanges.cashOrEquivalents[1])
-    {
-        // Adjust stocks and bonds down if cashOrEquivalents is too high
-        if (cashOrEquivalents > allocationRanges.cashOrEquivalents[1]) {
-            let excess = cashOrEquivalents - allocationRanges.cashOrEquivalents[1];
-            stocks -= Math.ceil(excess / 2);
-            bonds -= Math.floor(excess / 2);
-            cashOrEquivalents = 100 - stocks - bonds;
+    if (cashOrEquivalents < allocationRanges.cashOrEquivalents[0]) {
+        let shortfall = allocationRanges.cashOrEquivalents[0] - cashOrEquivalents;
+        if (stocks > shortfall) {
+            stocks -= shortfall;
+        } else {
+            bonds -= shortfall - stocks;
+            stocks = 0;
         }
-        // Adjust stocks and bonds up if cashOrEquivalents is too low
-        else {
-            let shortfall = allocationRanges.cashOrEquivalents[0] - cashOrEquivalents;
-            stocks += Math.ceil(shortfall / 2);
-            bonds += Math.floor(shortfall / 2);
-            cashOrEquivalents = 100 - stocks - bonds;
+        cashOrEquivalents = 100 - stocks - bonds;
+    } else if (cashOrEquivalents > allocationRanges.cashOrEquivalents[1]) {
+        let excess = cashOrEquivalents - allocationRanges.cashOrEquivalents[1];
+        if (stocks + excess <= 100) {
+            stocks += excess;
+        } else {
+            stocks = 100 - bonds;
         }
+        cashOrEquivalents = 100 - stocks - bonds;
     }
 
     return { stocks, bonds, cashOrEquivalents };
@@ -54,7 +64,7 @@ function getPortfolioByRisk(riskLevel) {
 
 // Controller to handle submitting or updating a portfolio based on questionnaire response
 export const submitPortfolio = async (req, res) => {
-    console.log("Received request:", req.body);
+    //console.log("Received request:", req.body);
     const token = req.headers.authorization?.split(" ")[1];
     //console.log("Authorization token:", token);
     if (!token) {
@@ -62,7 +72,7 @@ export const submitPortfolio = async (req, res) => {
     }
 
     try {
-        console.log("JWT Secret:", process.env.JWT_SECRET);
+        //console.log("JWT Secret:", process.env.JWT_SECRET);
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const userId = decoded.id;

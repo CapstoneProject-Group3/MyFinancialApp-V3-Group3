@@ -59,6 +59,7 @@ export const PieChartComponent = ({ data }) => {
 // Portfolio page component
 const PortfolioPage = () => {
     const [data, setData] = useState([]);
+    const [riskLevel, setRiskLevel] = useState('');
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const riskRating = queryParams.get('riskRating');
@@ -74,12 +75,13 @@ const PortfolioPage = () => {
         })
         .then(response => {
             console.log('API response:', response.data);
-            const { stocks, bonds, cashOrEquivalents } = response.data.portfolio;
+            const { stocks, bonds, cashOrEquivalents, riskLevel } = response.data.portfolio;
             setData([
                 { name: 'Stocks', value: stocks },
                 { name: 'Bonds', value: bonds },
                 { name: 'Cash or Equivalents', value: cashOrEquivalents }
             ]);
+            setRiskLevel(riskLevel);
         })
         .catch(error => {
             console.error('Error fetching portfolio data:', error.response ? error.response.data.error : error.message);
@@ -94,10 +96,36 @@ const PortfolioPage = () => {
                 fontWeight: 'bold',    // Make the text bold
                 fontSize: '24px',      // Increase the font size
                 marginBottom: '20px',  // Add space between the title and the chart
-                color: '#333'    
+                color: '#333'
             }}>
                 Your Investment Portfolio
             </h>
+            <p style={{
+                textAlign: 'center',
+                fontSize: '16px',
+                marginBottom: '10px',
+                color: '#666'
+            }}>
+                Risk Level: {riskLevel || 'Not available'}
+            </p>
+
+            <p style={{
+                textAlign: 'center',
+                fontSize: '16px',
+                marginBottom: '20px',
+                color: '#666',
+                maxWidth: '600px',
+                margin: 'auto'
+            }}>
+                Your portfolio allocations are based on established investment strategies to suit your risk profile.
+                Learn more about asset allocation strategies and how they might affect your investment choices on these resources:
+                <ul>
+                    <li><a href="https://www.investopedia.com/terms/a/assetallocation.asp" target="_blank" rel="noopener noreferrer">Investopedia - Asset Allocation</a></li>
+                    <li><a href="https://www.investopedia.com/managing-wealth/achieve-optimal-asset-allocation/" target="_blank" rel="noopener noreferrer">Investopedia - Achieve Optimal Asset Allocation</a></li>
+                    <li><a href="https://www.merrilledge.com/article/asset-allocation-strategies-to-help-you-manage-risk-and-reach-your-goals" target="_blank" rel="noopener noreferrer">Merrill Edge - Asset Allocation Strategies</a></li>
+                    <li><a href="https://smartasset.com/investing/asset-allocation" target="_blank" rel="noopener noreferrer">SmartAsset - Comprehensive Guide to Asset Allocation</a></li>
+                </ul>
+            </p>
             {data.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">
                     <PieChartComponent data={data} />
