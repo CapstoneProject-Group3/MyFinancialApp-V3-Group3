@@ -175,8 +175,8 @@ const Questionaire = () => {
             </form>
             <p id="result"></p>
 
-            <p>The source of questions are from Canadian Investment Regulatory Organization</p>
-            <p>https://www.ciro.ca/</p>
+            <p2>The source of the questions are from Canadian Investment Regulatory Organization. </p2>
+            <p2>https://www.ciro.ca/</p2>
         </div>
     );
 };

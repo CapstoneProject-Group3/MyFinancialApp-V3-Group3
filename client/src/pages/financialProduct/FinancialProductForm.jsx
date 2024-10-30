@@ -7,10 +7,11 @@ const FinancialProductForm = () => {
     const [interestRate, setInterestRate] = useState('');
     const [description, setDescription] = useState('');
     const [riskLevel, setRiskLevel] = useState('');
+    document.title = 'Product Input';
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         const newProduct = {
             name,
             type,
@@ -19,33 +20,32 @@ const FinancialProductForm = () => {
             description,
             riskLevel,
         };
-
+    
         try {
-            fetch('http://localhost:4000/api/financialProduct/create', {
+            const res = await fetch('http://localhost:4000/api/financialProduct/create', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(newProduct),
-            })
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error(`HTTP error! status: ${res.status}`);
-                }
-                alert('Financial product created successfully!');
-                console.log(response.data);
-
-                setName('');
-                setType('');
-                setInstitution('');
-                setInterestRate('');
-                setDescription('');
-                setRiskLevel('');
-                return res.json();
-            })
-            .then(rep => {
-                console.log('Response:', rep);
-            })
+            });
+    
+            if (!res.ok) {
+                const errorText = await res.text();
+                throw new Error(`HTTP error! status: ${res.status} - ${errorText}`);
+            }
+    
+            const responseData = await res.json();
+            alert('Financial product created successfully!');
+            console.log('Response:', responseData);
+    
+            setName('');
+            setType('');
+            setInstitution('');
+            setInterestRate('');
+            setDescription('');
+            setRiskLevel('');
+    
         } catch (error) {
             console.error('Error creating financial product:', error.message);
         }
