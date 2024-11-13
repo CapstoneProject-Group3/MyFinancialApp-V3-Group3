@@ -1,5 +1,5 @@
 import express from 'express';
-import { submitPortfolio } from '../controllers/portfolioController.js';
+import { submitPortfolio, getPortfolioByUserId } from '../controllers/portfolioController.js';
 
 const portfolioRouter = express.Router();
 
@@ -10,7 +10,7 @@ portfolioRouter.post('/', (req, res, next) => {
 }, submitPortfolio);
 
 // Route to retrieve a user's portfolio
-//router.get('/portfolio', fetchPortfolio);
+portfolioRouter.get('/fetchPortfolio', getPortfolioByUserId);
 
 export default portfolioRouter;
 

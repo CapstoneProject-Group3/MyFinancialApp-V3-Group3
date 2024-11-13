@@ -8,6 +8,7 @@ import dotenv from 'dotenv'
 import sequelize from './config/db.js';
 import portfolioRouter from "./routes/portfolioRoute.js";
 import financialProductRouter from "./routes/fianancialProductRoute.js";
+import recommendationRouter from "./routes/recommendationRoute.js";
 
 dotenv.config();
 const app = express();
@@ -40,13 +41,8 @@ app.use("/api/user", userRouter);
 app.use('/api/portfolio', portfolioRouter);
 app.use("/api/questionnaire", riskManageRouter);
 app.use("/api/financialProduct", financialProductRouter);
+app.use('/api/recommendations', recommendationRouter);
 
 app.get("/", (req, res) => {
   res.send("api Working");
 });
-
-/*
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
-*/

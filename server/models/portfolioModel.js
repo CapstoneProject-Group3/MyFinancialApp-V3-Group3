@@ -12,17 +12,17 @@ const Portfolio = sequelize.define('portfolios',{
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
     },
-    stocks: {
+    Stock: {
         type: Sequelize.FLOAT,
         allowNull: false,
         defaultValue: 0.0
     },
-    bonds: {
+    Fund: {
         type: Sequelize.FLOAT,
         allowNull: false,
         defaultValue: 0.0
     },
-    cashOrEquivalents: {
+    'Cash&Equivalent': {
         type: Sequelize.FLOAT,
         allowNull: false,
         defaultValue: 0.0

@@ -8,6 +8,8 @@ import Questionaire from './pages/survey/Questionaire';// import question page
 import Result from './pages/survey/Result';  // import result page
 import FinancialProductForm from './pages/financialProduct/FinancialProductForm';
 import FinancialProductSearchPage from './pages/financialProduct/FinancialProductSearchPage';
+import RecommendationPage from './pages/RecommendationPage';
+import UserSelection from './pages/UserSelection';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -25,6 +27,8 @@ const App = () => {
           <Route path="/portfolio" element={<PortfolioPage />} />
           <Route path="/financialProductForm" element={<FinancialProductForm />} />
           <Route path="/financialProductSearch" element={<FinancialProductSearchPage />} />
+          <Route path='/recommendations' element={<RecommendationPage />} />
+          <Route path='/userSelection' element={<UserSelection />} />
           <Route path='/' element={<Navigate to="/home" replace />} />
         </Routes>
       </div>

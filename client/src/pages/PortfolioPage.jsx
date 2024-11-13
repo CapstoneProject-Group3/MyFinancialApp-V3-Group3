@@ -63,6 +63,7 @@ const PortfolioPage = () => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const riskRating = queryParams.get('riskRating');
+    const navigate = useNavigate();
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -75,11 +76,12 @@ const PortfolioPage = () => {
         })
         .then(response => {
             console.log('API response:', response.data);
-            const { stocks, bonds, cashOrEquivalents, riskLevel } = response.data.portfolio;
+            const { Stock, Fund, riskLevel } = response.data.portfolio;
+            const CashAndEquivalent = response.data.portfolio["Cash&Equivalent"];
             setData([
-                { name: 'Stocks', value: stocks },
-                { name: 'Bonds', value: bonds },
-                { name: 'Cash or Equivalents', value: cashOrEquivalents }
+                { name: 'Stock', value: Stock },
+                { name: 'Fund', value: Fund },
+                { name: 'Cash&Equivalent', value: CashAndEquivalent }
             ]);
             setRiskLevel(riskLevel);
         })
@@ -88,35 +90,22 @@ const PortfolioPage = () => {
         });
     }
     }, [riskRating]);
+    
+
+    const handleNavigateToSelection = () => {
+        navigate('/userSelection');
+    };
 
     return (
-        <div style={{ width: '100%', height: '400px', position: 'relative' }}>
-            <h style={{
-                textAlign: 'center',   // Center the text horizontally
-                fontWeight: 'bold',    // Make the text bold
-                fontSize: '24px',      // Increase the font size
-                marginBottom: '20px',  // Add space between the title and the chart
-                color: '#333'
-            }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+            <h1 style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '24px', color: '#333', marginBottom: '20px' }}>
                 Your Investment Portfolio
-            </h>
-            <p style={{
-                textAlign: 'center',
-                fontSize: '16px',
-                marginBottom: '10px',
-                color: '#666'
-            }}>
+            </h1>
+            <p style={{ textAlign: 'center', fontSize: '16px', color: '#666', marginBottom: '10px' }}>
                 Risk Level: {riskLevel || 'Not available'}
             </p>
 
-            <p style={{
-                textAlign: 'center',
-                fontSize: '16px',
-                marginBottom: '20px',
-                color: '#666',
-                maxWidth: '600px',
-                margin: 'auto'
-            }}>
+            <p style={{ textAlign: 'center', fontSize: '16px', color: '#666', maxWidth: '600px', margin: 'auto', marginBottom: '20px' }}>
                 Your portfolio allocations are based on established investment strategies to suit your risk profile.
                 Learn more about asset allocation strategies and how they might affect your investment choices on these resources:
                 <ul>
@@ -126,13 +115,22 @@ const PortfolioPage = () => {
                     <li><a href="https://smartasset.com/investing/asset-allocation" target="_blank" rel="noopener noreferrer">SmartAsset - Comprehensive Guide to Asset Allocation</a></li>
                 </ul>
             </p>
-            {data.length > 0 ? (
-                <ResponsiveContainer width="100%" height="100%">
-                    <PieChartComponent data={data} />
-                </ResponsiveContainer>
-            ) : (
-                <p>No data available</p>
-            )}
+
+            <ResponsiveContainer width="100%" aspect={2}>
+                <PieChartComponent data={data} />
+            </ResponsiveContainer>
+            <button onClick={handleNavigateToSelection} style={{
+                width: '200px',
+                padding: '10px',
+                marginTop: '20px',
+                backgroundColor: '#0056b3',
+                color: 'white',
+                border: 'none',
+                borderRadius: '5px',
+                cursor: 'pointer'
+            }}>
+                Select Financial Products
+            </button>
         </div>
     );
 };

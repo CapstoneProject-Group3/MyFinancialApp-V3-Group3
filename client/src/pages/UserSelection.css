@@ -1,0 +1,15 @@
+
+.search-container {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    padding: 10px 0;
+    z-index: 1000;
+    border-bottom: 1px solid #ccc; /* Just for visual separation */
+}
+
+.search-results {
+    margin-top: 10px;
+    overflow-y: auto;
+    max-height: 400px; /* Adjust based on your design */
+}

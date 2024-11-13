@@ -3,50 +3,49 @@ import jwt from 'jsonwebtoken';
 import Portfolio from '../models/portfolioModel.js';
 
 const portfolioAllocations = {
-    'Very Conservative': { stocks: [25, 30], bonds: [60, 65], cashOrEquivalents: [5, 15] },
-    Conservative: { stocks: [35, 40], bonds: [55, 60], cashOrEquivalents: [5, 10] },
-    Balanced: { stocks: [50, 55], bonds: [35, 40], cashOrEquivalents: [5, 10] },
-    Growth: { stocks: [60, 65], bonds: [25, 30], cashOrEquivalents: [5, 10] },
-    'Aggressive Growth': { stocks: [80, 100], bonds: [0, 10], cashOrEquivalents: [0, 10] }
+    'Very Conservative': { Stock: [25, 30], Fund: [50, 55], 'Cash&Equivalent': [15, 20] },
+    Conservative: { Stock: [35, 40], Fund: [55, 60], 'Cash&Equivalent': [5, 10] },
+    Balanced: { Stock: [50, 55], Fund: [35, 40], 'Cash&Equivalent': [5, 10] },
+    Growth: { Stock: [60, 65], Fund: [25, 30], 'Cash&Equivalent': [5, 10] },
+    'Aggressive Growth': { Stock: [80, 100], Fund: [0, 10], 'Cash&Equivalent': [0, 10] }
 };
 
 function selectPortfolioAllocation(allocationRanges) {
-    let stocks = selectValueWithinRange(...allocationRanges.stocks);
-    let bonds = selectValueWithinRange(...allocationRanges.bonds);
-    let cashOrEquivalents = 100 - stocks - bonds;
+    let Stock = selectValueWithinRange(...allocationRanges.Stock);
+    let Fund = selectValueWithinRange(...allocationRanges.Fund);
+    let CashAndEquivalent = 100 - Stock - Fund; // Use a valid JavaScript identifier
 
-    // Correct values to ensure cashOrEquivalents is not negative and within the range
-    if (cashOrEquivalents < 0) {
-        let adjustment = Math.abs(cashOrEquivalents);
-        let adjustStocks = Math.ceil(adjustment / 2);
-        let adjustBonds = Math.floor(adjustment / 2);
+    if (CashAndEquivalent < 0) {
+        let adjustment = Math.abs(CashAndEquivalent);
+        let adjustStock = Math.ceil(adjustment / 2);
+        let adjustFund = Math.floor(adjustment / 2);
 
-        stocks -= adjustStocks > stocks ? stocks : adjustStocks;
-        bonds -= adjustBonds > bonds ? bonds : adjustBonds;
-        cashOrEquivalents = 100 - stocks - bonds;
+        Stock -= adjustStock > Stock ? Stock : adjustStock;
+        Fund -= adjustFund > Fund ? Fund : adjustFund;
+        CashAndEquivalent = 100 - Stock - Fund;
     }
 
-    // Ensure cashOrEquivalents falls within the specified range
-    if (cashOrEquivalents < allocationRanges.cashOrEquivalents[0]) {
-        let shortfall = allocationRanges.cashOrEquivalents[0] - cashOrEquivalents;
-        if (stocks > shortfall) {
-            stocks -= shortfall;
+    const cashRange = allocationRanges['Cash&Equivalent'];
+    if (CashAndEquivalent < cashRange[0]) {
+        let shortfall = cashRange[0] - CashAndEquivalent;
+        if (Stock > shortfall) {
+            Stock -= shortfall;
         } else {
-            bonds -= shortfall - stocks;
-            stocks = 0;
+            Fund -= shortfall - Stock;
+            Stock = 0;
         }
-        cashOrEquivalents = 100 - stocks - bonds;
-    } else if (cashOrEquivalents > allocationRanges.cashOrEquivalents[1]) {
-        let excess = cashOrEquivalents - allocationRanges.cashOrEquivalents[1];
-        if (stocks + excess <= 100) {
-            stocks += excess;
+        CashAndEquivalent = 100 - Stock - Fund;
+    } else if (CashAndEquivalent > cashRange[1]) {
+        let excess = CashAndEquivalent - cashRange[1];
+        if (Stock + excess <= 100) {
+            Stock += excess;
         } else {
-            stocks = 100 - bonds;
+            Stock = 100 - Fund;
         }
-        cashOrEquivalents = 100 - stocks - bonds;
+        CashAndEquivalent = 100 - Stock - Fund;
     }
 
-    return { stocks, bonds, cashOrEquivalents };
+    return { Stock, Fund, CashAndEquivalent };
 }
 
 function selectValueWithinRange(min, max) {
@@ -64,63 +63,75 @@ function getPortfolioByRisk(riskLevel) {
 
 // Controller to handle submitting or updating a portfolio based on questionnaire response
 export const submitPortfolio = async (req, res) => {
-    //console.log("Received request:", req.body);
     const token = req.headers.authorization?.split(" ")[1];
-    //console.log("Authorization token:", token);
     if (!token) {
         return res.status(401).json({ error: "Authorization token required" });
     }
 
     try {
-        //console.log("JWT Secret:", process.env.JWT_SECRET);
-
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const userId = decoded.id;
-        console.log("Decoded user ID:", userId);
-        // Fetch risk level from body and calculate allocations
         const { riskLevel } = req.body;
-        console.log("Received risk level:", riskLevel);
 
         if (!riskLevel) {
             return res.status(400).json({ error: "Risk level is required" });
         }
 
         const allocation = getPortfolioByRisk(riskLevel);
-        console.log("Calculated allocation:", allocation);
-        // Attempt to find and update, or create a new portfolio
         const portfolio = await Portfolio.findOne({ where: { userId } });
         if (portfolio) {
-            // Update existing portfolio
             await Portfolio.update({
-                stocks: allocation.stocks,
-                bonds: allocation.bonds,
-                cashOrEquivalents: allocation.cashOrEquivalents,
-                riskLevel: riskLevel
+                Stock: allocation.Stock,
+                Fund: allocation.Fund,
+                ['Cash&Equivalent']: allocation.CashAndEquivalent
             }, {
                 where: { userId }
             });
             res.json({ message: "Portfolio updated", portfolio: {...portfolio.toJSON(), ...allocation} });
         } else {
-            // Create new portfolio
             const newPortfolio = await Portfolio.create({
                 userId,
-                stocks: allocation.stocks,
-                bonds: allocation.bonds,
-                cashOrEquivalents: allocation.cashOrEquivalents,
+                Stock: allocation.Stock,
+                Fund: allocation.Fund,
+                ['Cash&Equivalent']: allocation.CashAndEquivalent,
                 riskLevel
             });
-            console.log("Created new portfolio:", newPortfolio);
             res.status(201).json({ message: "Portfolio created", portfolio: newPortfolio });
         }
     } catch (error) {
-        console.error("Error in processing portfolio:", error);
         if (error.name === 'TokenExpiredError') {
             return res.status(401).json({ error: 'Token has expired' });
         } else if (error.name === 'JsonWebTokenError') {
             return res.status(401).json({ error: 'Invalid token' });
         } else {
-            console.error("Error in processing portfolio:", error);
             return res.status(500).json({ error: 'Failed to process portfolio request.' });
         }
+    }
+};
+
+// fetch portfolio by userId
+export const getPortfolioByUserId = async (req, res) => {
+    if (!req.headers || !req.headers.authorization) {
+        return res.status(401).json({ error: "Authorization token required" });
+    }
+
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+        return res.status(401).json({ error: "Authorization token required" });
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const userId = decoded.id;
+
+        const portfolio = await Portfolio.findOne({ where: { userId } });
+        if (!portfolio) {
+            console.log("No portfolio found for user:", userId);
+            return res.status(404).json({ message: "No portfolio found for this user." });
+        }
+        return portfolio;
+    } catch (error) {
+        console.error("Error retrieving portfolio for user ID:", userId, error);
+        return res.status(500).json({ error: 'Failed to retrieve portfolio' });
     }
 };
