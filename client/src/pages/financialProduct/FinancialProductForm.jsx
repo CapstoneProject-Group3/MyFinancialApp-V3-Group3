@@ -7,6 +7,7 @@ const FinancialProductForm = () => {
     const [interestRate, setInterestRate] = useState('');
     const [description, setDescription] = useState('');
     const [riskLevel, setRiskLevel] = useState('');
+    const [fee,       setFee] = useState('');
     document.title = 'Product Input';
 
     const handleSubmit = async (e) => {
@@ -20,6 +21,7 @@ const FinancialProductForm = () => {
             interestRate,
             description,
             riskLevel,
+            fee,
         };
     
     
@@ -47,6 +49,7 @@ const FinancialProductForm = () => {
             setInterestRate('');
             setDescription('');
             setRiskLevel('');
+            setFee('');
     
         } catch (error) {
             console.error('Error creating financial product:', error.message);
@@ -108,6 +111,16 @@ const FinancialProductForm = () => {
                         required 
                     />
                 </div>
+                <div>
+                    <label>Fee:</label>
+                    <input 
+                        type="text" 
+                        value={fee} 
+                        onChange={(e) => setFee(e.target.value)} 
+                        required 
+                    />
+                </div>
+                
                 <button type="submit">Create</button>
             </form>
         </div>

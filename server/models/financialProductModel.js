@@ -25,8 +25,14 @@ const FinancialProduct = sequelize.define('financialProduct', {
     riskLevel: {
         type: Sequelize.STRING,
         allowNull: false
-    }
+    },
+    fee: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue: 0,
+    },
 }, {
+    tableName: 'financialProducts',
     timestamps: false
 });
 
