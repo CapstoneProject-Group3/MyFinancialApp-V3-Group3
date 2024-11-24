@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -9,6 +9,14 @@ const Register = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    document.body.classList.add('special-background');
+
+    return () => {
+      document.body.classList.remove('special-background');
+    };
+  }, []);
 
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
@@ -43,45 +51,99 @@ const Register = () => {
   };
 
   return (
-    <div>
-      <h1>Register</h1>
-      <form onSubmit={handleRegister}>
-        <div>
-          <label htmlFor="name">Name:</label>
-          <input
-            type="text"
-            id="name"
-            value={name}
-            onChange={e => setName(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        <button type="submit">Register</button>
-      </form>
-      {success && <p style={{ color: 'green' }}>Registration successful! Redirecting...</p>}
-    </div>
+      <div style={styles.container}>
+        <h1 style={styles.title}>Register</h1>
+        <form onSubmit={handleRegister} style={styles.form}>
+          <div style={styles.inputContainer}>
+            <label htmlFor="name" style={styles.label}>Name</label>
+            <input
+                type="text"
+                id="name"
+                value={name}
+                style={styles.input}
+                onChange={e => setName(e.target.value)}
+                required
+            />
+          </div>
+          <div style={styles.inputContainer}>
+            <label htmlFor="email" style={styles.label}>Email</label>
+            <input
+                type="email"
+                id="email"
+                value={email}
+                style={styles.input}
+                onChange={e => setEmail(e.target.value)}
+                required
+            />
+          </div>
+          <div style={styles.inputContainer}>
+            <label htmlFor="password" style={styles.label}>Password</label>
+            <input
+                type="password"
+                id="password"
+                value={password}
+                style={styles.input}
+                onChange={e => setPassword(e.target.value)}
+                required
+            />
+          </div>
+          {error && <p style={{color: 'red'}}>{error}</p>}
+          <button type="submit" style={styles.buttonRegister}>Register</button>
+        </form>
+        {success && <p style={{ color: 'green' }}>Registration successful! Redirecting...</p>}
+      </div>
   );
+};
+
+const styles = {
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100vh',
+    backgroundColor: 'transparent' ,
+    position: 'relative',
+    left: '-100%'
+  },
+  title: {
+    marginBottom: '20px'
+  },
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '300px'
+  },
+  inputContainer: {
+    marginBottom: '15px'
+  },
+  label: {
+    marginBottom: '5px',
+    display: 'block'
+  },
+  input: {
+    width: '100%',
+    padding: '10px',
+    marginBottom: '10px'
+  },
+  buttonGroup: {
+    display: 'flex',
+    justifyContent: 'space-between'
+  },
+  buttonLogin: {
+    backgroundColor: '#007bff',
+    color: 'white',
+    padding: '10px 20px',
+    border: 'none',
+    borderRadius: '5px'
+  },
+  buttonRegister: {
+    backgroundColor: '#007bff',
+    color: 'white',
+    padding: '10px 20px',
+    border: 'none',
+    borderRadius: '5px'
+  }
 };
 
 export default Register;

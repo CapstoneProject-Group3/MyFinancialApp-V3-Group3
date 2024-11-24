@@ -10,6 +10,14 @@ const Home = () => {
     const [userId, setUserId] = useState(null);
 
     useEffect(() => {
+        document.body.classList.add('special-background');
+
+        return () => {
+            document.body.classList.remove('special-background');
+        };
+    }, []);
+
+    useEffect(() => {
         const checkAuth = () => {
             const token = localStorage.getItem('token');
             if (token) {
@@ -19,6 +27,7 @@ const Home = () => {
                 setHasToken(true);
             } else {
                 setHasToken(false);
+                navigate('/login');
             }
         };
 
@@ -30,9 +39,11 @@ const Home = () => {
         setIsAuthenticated(false);
         setHasToken(false);
         setUserId(null);
+        navigate('/login');
     };
 
     const buttonStyle = {
+        width: '45%',
         display: 'inline-block',
         padding: '10px 20px',
         margin: '5px',
@@ -84,21 +95,35 @@ const Home = () => {
         }
     };
 
+    const styles = {
+        buttonContainer: {
+            display: 'flex',
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            justifyContent: 'space-around',
+            alignItems: 'center',
+            padding: '10px',
+            position: 'relative',
+            left: '-60%'
+        },
+        adminButtonContainer: {
+            display: 'flex',
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            justifyContent: 'space-around',
+            alignItems: 'center',
+            padding: '10px',
+            position: 'relative',
+            left: '-5%',
+            width: '50%'
+        }
+    };
 
-    if (!hasToken) {
-        return (
-            <div>
-                <div>You are not logged in.</div>
-                <Link to="/login" style={buttonStyle}>Login</Link>
-                <Link to="/register" style={buttonStyle}>Register</Link>
-            </div>
-        );
-    }
 
     //if admin
     if (userId === 3) {
         return (
-            <div>
+            <div style={styles.adminButtonContainer}>
                 <h1>Welcome, Admin!</h1>
                 <p>You are logged in as an admin.</p>
                 <button onClick={() => navigate("/financialProductForm")} style={buttonStyle}>Manage Financial
@@ -116,17 +141,16 @@ const Home = () => {
     }
 
     return (
-        <div>
-            <h1>Welcome to the Home Page</h1>
-            <p>You are authenticated and can view this content.</p>
+        <div style={styles.buttonContainer}>
             <button onClick={handleLogout} style={buttonStyle}>Logout</button>
-            <br/>
-            <p>Access our survey.</p>
-            <Link to="/questionaire" style={buttonStyle}>Start Survey</Link>
+            <Link to="/questionaire" style={{...buttonStyle, display: 'inline-block', textDecoration: 'none'}}>Start Survey</Link>
             <button onClick={goToResultsPage} style={buttonStyle}>View Result</button>
             <button onClick={goToPortfolio} style={buttonStyle}>Go to Portfolio</button>
         </div>
     );
+
 };
+
+
 
 export default Home;
