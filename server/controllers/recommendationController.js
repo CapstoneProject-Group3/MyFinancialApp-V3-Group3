@@ -48,6 +48,7 @@ export const generateAndSaveRecommendation = async (req, res) => {
                 interestRate: product.interestRate,
                 description: product.description,
                 riskLevel: product.riskLevel,
+                fee: product.fee,
                 investmentProportion: proportion
             });
 

@@ -32,25 +32,27 @@ const RecommendationsPage = () => {
             <table>
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Type</th>
-                        <th>Institution</th>
-                        <th>Interest Rate</th>
-                        <th>Description</th>
-                        <th>Risk Level</th>
-                        <th>Investment Proportion</th>
+                        <th style={{ paddingRight: '20px' }}>Name</th>
+                        <th style={{ paddingRight: '20px' }}>Type</th>
+                        <th style={{ paddingRight: '20px' }}>Institution</th>
+                        <th style={{ paddingRight: '20px' }}>Interest Rate</th>
+                        <th style={{ paddingRight: '20px' }}>Description</th>
+                        <th style={{ paddingRight: '20px' }}>Risk Level</th>
+                        <th style={{ paddingRight: '20px' }}>Fee</th>
+                        <th style={{ paddingLeft: '20px' }}>Investment Proportion</th>
                     </tr>
                 </thead>
                 <tbody>
                     {recommendations.map(rec => (
                         <tr key={rec.productId}>
-                            <td>{rec.name}</td>
-                            <td>{rec.type}</td>
-                            <td>{rec.institution}</td>
-                            <td>{rec.interestRate}</td>
-                            <td>{rec.description}</td>
-                            <td>{rec.riskLevel}</td>
-                            <td>{`${rec.investmentProportion}%`}</td>
+                            <td style={{ paddingRight: '20px' }}>{rec.name}</td>
+                            <td style={{ paddingRight: '20px' }}>{rec.type}</td>
+                            <td style={{ paddingRight: '20px' }}>{rec.institution}</td>
+                            <td style={{ paddingRight: '20px' }}>{rec.interestRate}</td>
+                            <td style={{ paddingRight: '20px' }}>{rec.description}</td>
+                            <td style={{ paddingRight: '20px' }}>{rec.riskLevel}</td>
+                            <td style={{ paddingRight: '20px' }}>{rec.fee}</td>
+                            <td style={{ paddingLeft: '20px' }}>{`${rec.investmentProportion}%`}</td>
                         </tr>
                     ))}
                 </tbody>

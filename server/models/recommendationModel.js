@@ -47,6 +47,11 @@ const Recommendation = sequelize.define('recommendations', {
         type: Sequelize.STRING,
         allowNull: false
     },
+    fee: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue: 0,
+    },
     investmentProportion: {
         type: Sequelize.FLOAT,
         allowNull: false
