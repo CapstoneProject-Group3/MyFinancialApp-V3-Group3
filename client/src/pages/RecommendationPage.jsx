@@ -57,6 +57,9 @@ const RecommendationsPage = () => {
                     ))}
                 </tbody>
             </table>
+            <div style={{ marginTop: "20px", fontSize: "16px", color: "gray" }}>
+                <strong>Note:</strong> The investment proportion displayed for each type represents the total investment amount for that category. If you select multiple products of the same type, this number reflects the combined total. You can decide how to allocate your investment within these products based on the given range.
+            </div>
         </div>
     );
 };

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './UserSelection.css';
 
 const FinancialProductSearchPage = () => {
     const [searchType, setSearchType] = useState('');
@@ -22,11 +21,10 @@ const FinancialProductSearchPage = () => {
 
             if (response.ok) {
                 const data = await response.json();
-                const productsWithChecked = data.data.map(product => ({
+                setSearchResults(data.data.map(product => ({
                     ...product,
                     isChecked: selectedProducts.some(p => p.id === product.id)
-                }));
-                setSearchResults(productsWithChecked);
+                })));
             } else {
                 throw new Error('Failed to fetch financial products');
             }
@@ -44,23 +42,17 @@ const FinancialProductSearchPage = () => {
         }
     };
 
-    // Function to check if all types have been selected at least once
     const allTypesSelected = () => {
         const selectedTypes = new Set(selectedProducts.map(p => p.type));
         return productTypes.every(type => selectedTypes.has(type));
     };
 
-    const generateRecommendations = () => {
-        // Optionally, handle any logic needed before navigation, such as validation
-        navigate('/recommendations', { state: { selectedProducts } });
-    };
-
     return (
         <div>
-            <div className="search-container">
+            <div style={{ position: 'sticky', top: 0, backgroundColor: '#fff', padding: '10px', zIndex: 1000 }}>
                 <h2>Search Financial Products by Type</h2>
-                <div>
-                    <select value={searchType} onChange={e => setSearchType(e.target.value)}>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                    <select value={searchType} onChange={e => setSearchType(e.target.value)} style={{ flexGrow: 1 }}>
                         <option value="">Select a Product Type</option>
                         {productTypes.map(type => (
                             <option key={type} value={type}>{type}</option>
@@ -69,12 +61,10 @@ const FinancialProductSearchPage = () => {
                     <button onClick={handleSearch}>Search</button>
                 </div>
             </div>
-
-            <div className="search-results">
-                <h3>Search Results</h3>
+            <div style={{ overflowY: 'auto', maxHeight: '400px', marginTop: '20px' }}>
                 <ul>
                     {searchResults.map((product) => (
-                        <li key={product.id}>
+                        <li key={product.id} style={{ listStyleType: 'none', marginBottom: '10px' }}>
                             <strong>Name:</strong> {product.name} <br />
                             <strong>Type:</strong> {product.type} <br />
                             <strong>Institution:</strong> {product.institution} <br />
@@ -89,13 +79,19 @@ const FinancialProductSearchPage = () => {
                         </li>
                     ))}
                 </ul>
-                {allTypesSelected() && (
-                    <button onClick={generateRecommendations}>Generate Recommendations</button>
-                )}
-                {!allTypesSelected() && (
-                    <p>Please make sure to select at least one product from each type.</p>
-                )}
             </div>
+            {!allTypesSelected() && (
+                <div style={{ position: 'sticky', bottom: 0, backgroundColor: '#fff', padding: '10px', textAlign: 'center', color: 'red' }}>
+                    <p>Please make sure to select at least one product from each type to generate recommendations.</p>
+                </div>
+            )}
+            {allTypesSelected() && (
+                <div style={{ position: 'sticky', bottom: 0, backgroundColor: '#fff', padding: '10px', textAlign: 'center' }}>
+                    <button onClick={() => navigate('/recommendations', { state: { selectedProducts } })}>
+                        Generate Recommendations
+                    </button>
+                </div>
+            )}
         </div>
     );
 };
